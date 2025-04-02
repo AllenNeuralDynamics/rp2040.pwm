@@ -63,6 +63,9 @@ public:
         pwm_set_chan_level(slice_num_, gpio_channel_, 0);
     }
 
+    inline uint32_t pin()
+    {return pwm_pin_;}
+
 private:
     uint pwm_pin_;
     uint slice_num_;

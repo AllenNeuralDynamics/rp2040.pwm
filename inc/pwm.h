@@ -45,9 +45,11 @@ public:
      */
     inline void enable_output()
     {
-        pwm_enabled_ = true;
+        gpio_set_function(pwm_pin_, GPIO_FUNC_PWM);
+/*
         // Apply current duty cycle.
         pwm_set_chan_level(slice_num_, gpio_channel_, duty_cycle_);
+*/
     }
 
     /**
@@ -59,8 +61,13 @@ public:
         // We disable by setting the duty cycle to zero because disabling the
         // PWM peripheral leaves the GPIO pin in the previous state, which
         // could be 1.
-        pwm_enabled_ = false;
-        pwm_set_chan_level(slice_num_, gpio_channel_, 0);
+
+        // Note: If we could wait up to 1 whole pwm cycle, we could just call
+        //  pwm_set_chan_level(slice_num_, gpio_channel_, 0);
+
+        // Kill output ASAP, by attaching the pin to the SIO peripheral
+        // which is preconfigured to drive the output LOW.
+        gpio_set_function(pwm_pin_, GPIO_FUNC_SIO);
     }
 
     inline uint32_t pin()
@@ -71,7 +78,6 @@ private:
     uint slice_num_;
     uint gpio_channel_;
     uint duty_cycle_; /// The current duty cycle setting.
-    bool pwm_enabled_;
 
     // Constants
     static const uint16_t PWM_STEP_INCREMENTS = 1000;

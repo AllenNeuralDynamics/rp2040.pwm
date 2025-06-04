@@ -70,6 +70,12 @@ public:
         gpio_set_function(pwm_pin_, GPIO_FUNC_SIO);
     }
 
+    inline void set_pwm_step_increments(uint16_t pwm_step_increments)
+    {
+        pwm_set_wrap(slice_num_, pwm_step_increments - 1);
+        pwm_step_increments_ = pwm_step_increments;
+    }
+
     inline uint32_t pin()
     {return pwm_pin_;}
 
@@ -78,9 +84,10 @@ private:
     uint slice_num_;
     uint gpio_channel_;
     uint duty_cycle_; /// The current duty cycle setting.
+    uint16_t pwm_step_increments_;
 
     // Constants
-    static const uint16_t PWM_STEP_INCREMENTS = 1000;
+    static const uint16_t DEFAULT_PWM_STEP_INCREMENTS = 1000;
     static const float DEFAULT_PWM_FREQ_HZ;
 };
 
